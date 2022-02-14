@@ -49,7 +49,7 @@ FROM BankingInformation as I1) as A
 group by A.SocialStatus
 
 --Пятый запрос
-USE BankingSphere
+USE BankingSphereDataBase
 GO
 Alter PROCEDURE [dbo].AddDollars AS
 BEGIN
@@ -73,7 +73,7 @@ From InformationCLient
 group by Accounts.AccountName,Accounts.Balance,Clients.Client
 
 --Седьмой запрос
-USE BankingSphere
+USE BankingSphereDataBase
 GO
 Create PROCEDURE [dbo].ProcedureTransaction AS
 BEGIN
@@ -99,7 +99,7 @@ FROM     dbo.Accounts
 		JOIN dbo.Cards ON dbo.InformationCLient.CardsId = dbo.Cards.CardsId;
 
 --Восьмой запрос
-USE BankingSphere
+USE BankingSphereDataBase
 GO
 
 Create TRIGGER [dbo].Prohibition
