@@ -39,14 +39,14 @@ From   dbo.Cards
 GROUP BY BankingInformation.SocialStatus
 
 --Четвертый запросс подзапросом 
-SELECT A.SocialStatus, COUNT(A.Count) as Count
+SELECT BankingInformation.SocialStatus, COUNT(BankingInformation.Count) as Count
 FROM
 (SELECT SocialStatus,
-					(SELECT COUNT(I2.ClientsId)
-					FROM InformationCLient as I2
-					WHERE I2.ClientId= I1.ClientId) as Count
-FROM BankingInformation as I1) as A 
-group by A.SocialStatus
+					(SELECT COUNT(InformationCLient.ClientsId)
+					FROM InformationCLient 
+					WHERE InformationCLient.ClientId= BankingInformation.ClientId) as Count
+FROM BankingInformation ) as BankingInformation
+group by BankingInformation.SocialStatus
 
 --Пятый запрос
 USE BankingSphereDataBase
