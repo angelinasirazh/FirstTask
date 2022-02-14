@@ -1,13 +1,13 @@
---Первый запрос
+--РџРµСЂРІС‹Р№ Р·Р°РїСЂРѕСЃ
 Select dbo.Banks.BankName
 From dbo.Banks
   Join dbo.BankingInformation 
 	on  dbo.BankingInformation.BankId = dbo.Banks.BankId 
   Join dbo.Towns 
 	on dbo.BankingInformation.TownId = dbo.Towns.TownId
-Where dbo.Towns.Town = 'Гомель'
+Where dbo.Towns.Town = 'Р“РѕРјРµР»СЊ'
 
---Второй запрос
+--Р’С‚РѕСЂРѕР№ Р·Р°РїСЂРѕСЃ
 Select dbo.Cards.Cards,dbo.Cards.Balance,dbo.Clients.Client,dbo.Banks.BankName
 From   dbo.InformationCLient
 	Join dbo.Cards 
@@ -19,7 +19,7 @@ From   dbo.InformationCLient
 	Join dbo.Banks 
 		on  dbo.Banks.BankId = dbo.BankingInformation.BankId
 
---Третий запрос
+--РўСЂРµС‚РёР№ Р·Р°РїСЂРѕСЃ
 Select Accounts.AccountName,Accounts.Balance,Sum(Cards.Balance) AS SumCards,Accounts.Balance - Sum(Cards.Balance) as Difference
 From InformationCLient
 	Join dbo.Accounts 
@@ -29,7 +29,7 @@ From InformationCLient
 group by Accounts.AccountName,Accounts.Balance
 HAVING (Accounts.Balance <> Sum(Cards.Balance))
 
---Четвертый запрос (с group by)
+--Р§РµС‚РІРµСЂС‚С‹Р№ Р·Р°РїСЂРѕСЃ (СЃ group by)
 Select BankingInformation.SocialStatus,COUNT(dbo.Cards.Cards) As CountStatus
 From   dbo.Cards 
 	Join dbo.InformationCLient 
@@ -38,7 +38,7 @@ From   dbo.Cards
 		on  dbo.BankingInformation.ClientId = dbo.InformationCLient.ClientId
 GROUP BY BankingInformation.SocialStatus
 
---Четвертый запросс подзапросом (но я сделала тоже с group by)
+--Р§РµС‚РІРµСЂС‚С‹Р№ Р·Р°РїСЂРѕСЃСЃ РїРѕРґР·Р°РїСЂРѕСЃРѕРј (РЅРѕ СЏ СЃРґРµР»Р°Р»Р° С‚РѕР¶Рµ СЃ group by)
 SELECT A.SocialStatus, COUNT(A.Count) as Count
 FROM
 (SELECT SocialStatus,
@@ -48,7 +48,7 @@ FROM
 FROM BankingInformation as I1) as A 
 group by A.SocialStatus
 
---Пятый запрос
+--РџСЏС‚С‹Р№ Р·Р°РїСЂРѕСЃ
 USE BankingSphereDataBase
 GO
 Alter PROCEDURE [dbo].AddDollars AS
@@ -58,10 +58,10 @@ BEGIN
 	FROM Accounts 
 		INNER JOIN InformationClient ON Accounts.AccountId = InformationClient.AccountId 
 		INNER JOIN BankingInformation ON InformationClient.ClientId = BankingInformation.ClientId
-	WHERE BankingInformation.SocialStatus='студент'
+	WHERE BankingInformation.SocialStatus='СЃС‚СѓРґРµРЅС‚'
 END;
 
---Шестой запрос
+--РЁРµСЃС‚РѕР№ Р·Р°РїСЂРѕСЃ
 Select Clients.Client,Accounts.Balance - Sum(Cards.Balance) as AvailableMoneyForTransfer
 From InformationCLient
 	Join dbo.Accounts 
@@ -72,20 +72,20 @@ From InformationCLient
 		on dbo.Clients.ClientsId = InformationCLient.ClientsId
 group by Accounts.AccountName,Accounts.Balance,Clients.Client
 
---Седьмой запрос
+--РЎРµРґСЊРјРѕР№ Р·Р°РїСЂРѕСЃ
 USE BankingSphereDataBase
 GO
 Create PROCEDURE [dbo].ProcedureTransaction AS
 BEGIN
 BEGIN TRANSACTION
 
-   --Инструкция 1
+   --РРЅСЃС‚СЂСѓРєС†РёСЏ 1
    UPDATE Cards SET Cards.Balance = Cards.Balance+Accounts.Balance
    from  dbo.Accounts 
 	   JOIN dbo.InformationCLient ON dbo.Accounts.AccountId = dbo.InformationCLient.AccountId 
 	   JOIN dbo.Cards ON dbo.InformationCLient.CardsId = dbo.Cards.CardsId;
   
-   --Инструкция 2
+   --РРЅСЃС‚СЂСѓРєС†РёСЏ 2
     UPDATE Accounts SET Accounts.Balance = 0
    from  dbo.Accounts
 		JOIN dbo.InformationCLient ON dbo.Accounts.AccountId = dbo.InformationCLient.AccountId 
@@ -98,7 +98,7 @@ FROM     dbo.Accounts
 		JOIN dbo.InformationCLient ON dbo.Accounts.AccountId = dbo.InformationCLient.AccountId
 		JOIN dbo.Cards ON dbo.InformationCLient.CardsId = dbo.Cards.CardsId;
 
---Восьмой запрос
+--Р’РѕСЃСЊРјРѕР№ Р·Р°РїСЂРѕСЃ
 USE BankingSphereDataBase
 GO
 
@@ -114,7 +114,7 @@ From   dbo.InformationCLient
 	on  dbo.InformationCLient.CardsId = dbo.Cards.CardsId
 	GROUP BY Accounts.Balance)
 BEGIN
-	PRINT'Вы не можете изменить данные баланса аккаунта'
+	PRINT'Р’С‹ РЅРµ РјРѕР¶РµС‚Рµ РёР·РјРµРЅРёС‚СЊ РґР°РЅРЅС‹Рµ Р±Р°Р»Р°РЅСЃР° Р°РєРєР°СѓРЅС‚Р°'
 	ROLLBACK 
 END
 
@@ -131,6 +131,6 @@ From   dbo.InformationCLient
 	on  dbo.InformationCLient.CardsId = dbo.Cards.CardsId
 	GROUP BY Accounts.Balance)>(SELECT Balance FROM inserted)
 BEGIN
-	PRINT'Вы не можете изменить данные баланса карточки'
+	PRINT'Р’С‹ РЅРµ РјРѕР¶РµС‚Рµ РёР·РјРµРЅРёС‚СЊ РґР°РЅРЅС‹Рµ Р±Р°Р»Р°РЅСЃР° РєР°СЂС‚РѕС‡РєРё'
 	ROLLBACK 
 END
