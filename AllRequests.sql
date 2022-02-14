@@ -38,7 +38,7 @@ From   dbo.Cards
 		on  dbo.BankingInformation.ClientId = dbo.InformationCLient.ClientId
 GROUP BY BankingInformation.SocialStatus
 
---Четвертый запросс подзапросом (но я сделала тоже с group by)
+--Четвертый запросс подзапросом 
 SELECT A.SocialStatus, COUNT(A.Count) as Count
 FROM
 (SELECT SocialStatus,
