@@ -73,24 +73,37 @@ From InformationCLient
 group by Accounts.AccountName,Accounts.Balance,Clients.Client
 
 --Седьмой запрос
-USE BankingSphereDataBase
+USE BankingSphere
 GO
-Create PROCEDURE [dbo].ProcedureTransaction AS
-BEGIN
-BEGIN TRANSACTION
 
-   --Инструкция 1
-   UPDATE Cards SET Cards.Balance = Cards.Balance+Accounts.Balance
-   from  dbo.Accounts 
-	   JOIN dbo.InformationCLient ON dbo.Accounts.AccountId = dbo.InformationCLient.AccountId 
-	   JOIN dbo.Cards ON dbo.InformationCLient.CardsId = dbo.Cards.CardsId;
+Alter PROCEDURE [dbo].ProcedureTransaction @Balance AS INT = 10 AS
+Begin
+	BEGIN TRY
+	BEGIN TRANSACTION
+
+	   --Инструкция 1
+	   UPDATE Cards SET Cards.Balance = @Balance+Cards.Balance
+	   from  dbo.Accounts INNER JOIN
+					  dbo.InformationCLient ON dbo.Accounts.AccountId = dbo.InformationCLient.AccountId INNER JOIN
+					  dbo.Cards ON dbo.InformationCLient.CardsId = dbo.Cards.CardsId;
+		
   
-   --Инструкция 2
-    UPDATE Accounts SET Accounts.Balance = 0
-   from  dbo.Accounts
-		JOIN dbo.InformationCLient ON dbo.Accounts.AccountId = dbo.InformationCLient.AccountId 
-		JOIN dbo.Cards ON dbo.InformationCLient.CardsId = dbo.Cards.CardsId;
-   COMMIT TRANSACTION
+	   --Инструкция 2
+		UPDATE Accounts SET Accounts.Balance = Accounts.Balance - @Balance
+	    from  dbo.Accounts INNER JOIN
+					  dbo.InformationCLient ON dbo.Accounts.AccountId = dbo.InformationCLient.AccountId INNER JOIN
+					  dbo.Cards ON dbo.InformationCLient.CardsId = dbo.Cards.CardsId;
+		
+	END TRY
+	BEGIN CATCH
+	ROLLBACK TRANSACTION
+
+		  --Выводим сообщение об ошибке
+		  SELECT ERROR_NUMBER() AS [Номер ошибки],
+				 ERROR_MESSAGE() AS [Описание ошибки]
+	RETURN
+	END CATCH
+	COMMIT TRANSACTION
 End;
 
 SELECT dbo.Accounts.Balance, dbo.Cards.Balance AS Expr1, dbo.Accounts.AccountName, dbo.Cards.Cards
